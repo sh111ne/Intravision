@@ -1,0 +1,19 @@
+import { configureStore } from '@reduxjs/toolkit';
+import { useDispatch, useSelector } from 'react-redux';
+import applicationsSlice from './slices/applicationsSlice';
+import { applicationsApi } from '../api/applicationsApi';
+
+export const store = configureStore({
+  reducer: {
+    applicationsSlice,
+    [applicationsApi.reducerPath]: applicationsApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(applicationsApi.middleware),
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+
+export type AppDispatch = typeof store.dispatch;
+
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
+export const useAppSelector = useSelector.withTypes<RootState>();
