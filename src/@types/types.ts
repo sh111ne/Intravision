@@ -57,3 +57,8 @@ export type User = {
   id: number;
   name: string;
 };
+
+export type NewApplication = {
+  name: string;
+  description: string;
+};

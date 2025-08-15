@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { Priority, Status, Task, User } from '../@types/types';
+import type { NewApplication, Priority, Status, Task, User } from '../@types/types';
 
 export type TasksResponse = {
   '@odata.context': string;
@@ -50,6 +50,13 @@ export const applicationsApi = createApi({
       }),
       transformResponse: (response: Task) => response,
     }),
+    createTask: builder.mutation<number, { tenantguid: string; taskData: NewApplication }>({
+      query: ({ tenantguid, taskData }) => ({
+        url: `/api/${tenantguid}/Tasks`,
+        method: 'POST',
+        body: taskData,
+      }),
+    }),
   }),
 });
 
@@ -59,4 +66,5 @@ export const {
   useGetPrioritiesQuery,
   useGetUsersQuery,
   useGetOneTaskQuery,
+  useCreateTaskMutation,
 } = applicationsApi;

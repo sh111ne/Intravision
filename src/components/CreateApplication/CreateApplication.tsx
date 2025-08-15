@@ -1,5 +1,6 @@
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import styles from './СreateApplication.module.scss';
+import { useCreateTaskMutation, useGetTasksQuery } from '../../api/applicationsApi';
 
 type NewApplication = {
   name: string;
@@ -8,9 +9,11 @@ type NewApplication = {
 
 type CreateApplicationProps = {
   onClose: () => void;
+  setActive: (id: number) => void;
 };
 
-const CreateApplication = ({ onClose }: CreateApplicationProps) => {
+const CreateApplication = ({ onClose, setActive }: CreateApplicationProps) => {
+  const tenantguid = '3c1d64a0-ace0-40ed-9901-7a20bf7f7d34';
   const {
     register,
     formState: { errors, isValid },
@@ -20,9 +23,17 @@ const CreateApplication = ({ onClose }: CreateApplicationProps) => {
     mode: 'onBlur',
   });
 
-  const onSubmit: SubmitHandler<NewApplication> = async (obj) => {
+  const [createTask, { isLoading }] = useCreateTaskMutation();
+  const { refetch } = useGetTasksQuery(tenantguid);
+
+  const onSubmit: SubmitHandler<NewApplication> = async (taskData) => {
     try {
-      console.log(obj);
+      console.log(taskData);
+      const response = await createTask({ tenantguid, taskData }).unwrap();
+
+      console.log('Заявка создана, ID:', response);
+      await refetch();
+      setActive(response);
       reset();
       onClose();
     } catch (err) {
@@ -62,8 +73,8 @@ const CreateApplication = ({ onClose }: CreateApplicationProps) => {
           </label>
 
           <div className={styles.buttonsBottom}>
-            <button type="submit" disabled={!isValid} className={styles.buttonSubmit}>
-              Сохранить
+            <button type="submit" disabled={!isValid || isLoading} className={styles.buttonSubmit}>
+              {isLoading ? 'Сохранение...' : 'Сохранить'}
             </button>
           </div>
         </form>

@@ -27,6 +27,10 @@ const Applications = () => {
 
   const toggleCreateForm = () => {
     setIsCreateFormOpen(!isCreateFormOpen);
+  };
+
+  const toggleCreateFormButton = () => {
+    setIsCreateFormOpen(!isCreateFormOpen);
     setActiveApplication(undefined);
   };
 
@@ -45,13 +49,14 @@ const Applications = () => {
   console.log(statuses);
   console.log(priorities);
   console.log(users);
+  console.log(activeApplication);
 
   return (
     <div>
       <h1>Applications</h1>
       <div className={styles.content}>
         <div className={styles.create}>
-          <button className={styles.createButton} onClick={toggleCreateForm}>
+          <button className={styles.createButton} onClick={toggleCreateFormButton}>
             {isCreateFormOpen ? 'Закрыть' : 'Создать заявку'}
           </button>
         </div>
@@ -79,7 +84,7 @@ const Applications = () => {
         </table>
         {isCreateFormOpen && !activeApplication && (
           <div className={styles.formContainer}>
-            <CreateApplication onClose={toggleCreateForm} />
+            <CreateApplication onClose={toggleCreateForm} setActive={setActiveApplication} />
           </div>
         )}
         {activeApplication && !isCreateFormOpen && (
