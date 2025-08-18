@@ -62,3 +62,7 @@ export type NewApplication = {
   name: string;
   description: string;
 };
+
+export type SelectModalProps = {
+  obj: { id: number; name: string; rgb?: string }[];
+};

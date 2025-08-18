@@ -1,0 +1,42 @@
+.navbar {
+  background-color: #002137;
+  width: 95px;
+  height: 100vh;
+  box-sizing: border-box;
+
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    &El {
+      display: flex;
+      flex-direction: column;
+      padding: 15px 10px;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: 0.2s;
+
+      &Text {
+        text-decoration: none;
+        color: #fff;
+        font-size: 12px;
+        text-align: center;
+      }
+
+      .svg {
+        width: 25px;
+        height: 25px;
+      }
+
+      .logo {
+        width: 50px;
+      }
+
+      &:hover {
+        background-color: #002c49;
+      }
+    }
+  }
+}

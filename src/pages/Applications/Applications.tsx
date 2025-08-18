@@ -9,7 +9,12 @@ import {
   useGetUsersQuery,
 } from '../../api/applicationsApi';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
-import { setApplications } from '../../redux/slices/applicationsSlice';
+import {
+  setApplications,
+  setPriorities,
+  setStatuses,
+  setUsers,
+} from '../../redux/slices/applicationsSlice';
 import CreateApplication from '../../components/CreateApplication/CreateApplication';
 import EditApplication from '../../components/EditApplication/EditApplication';
 
@@ -45,10 +50,19 @@ const Applications = () => {
     }
   }, [listApplications, isSuccess, dispatch]);
 
+  useEffect(() => {
+    if (statuses) {
+      dispatch(setStatuses(statuses));
+    }
+    if (priorities) {
+      dispatch(setPriorities(priorities));
+    }
+    if (users) {
+      dispatch(setUsers(users));
+    }
+  }, [statuses, priorities, users, dispatch]);
+
   console.log(listApplications);
-  console.log(statuses);
-  console.log(priorities);
-  console.log(users);
   console.log(activeApplication);
 
   return (
