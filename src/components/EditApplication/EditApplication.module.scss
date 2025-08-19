@@ -1,0 +1,18 @@
+.editBlock {
+  display: flex;
+  flex-direction: column;
+
+  .title {
+    display: flex;
+  }
+
+  .content {
+    display: flex;
+    justify-content: space-between;
+    &Text {
+      &CommList {
+        list-style: none;
+      }
+    }
+  }
+}

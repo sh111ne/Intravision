@@ -15,8 +15,11 @@ import {
   setStatuses,
   setUsers,
 } from '../../redux/slices/applicationsSlice';
+
 import CreateApplication from '../../components/CreateApplication/CreateApplication';
 import EditApplication from '../../components/EditApplication/EditApplication';
+
+import lens from '/img/searchicon.svg?url';
 
 const Applications = () => {
   const tenantguid = '3c1d64a0-ace0-40ed-9901-7a20bf7f7d34';
@@ -66,31 +69,39 @@ const Applications = () => {
   console.log(activeApplication);
 
   return (
-    <div>
-      <h1>Applications</h1>
+    <div className={styles.wrapper}>
+      <div className={styles.title}>
+        <div className={styles.search}>
+          <input type="text" className={styles.searchInput} />
+          <img src={lens} alt="lens" className={styles.searchLens} />
+        </div>
+      </div>
       <div className={styles.content}>
         <div className={styles.create}>
           <button className={styles.createButton} onClick={toggleCreateFormButton}>
             {isCreateFormOpen ? 'Закрыть' : 'Создать заявку'}
           </button>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>id</th>
-              <th>название</th>
-              <th>статус</th>
-              <th>испольнитель</th>
+        <table className={styles.applications}>
+          <thead className={styles.applicationsHead}>
+            <tr className={styles.applicationsHeadTr}>
+              <th className={styles.id}>ID</th>
+              <th className={styles.name}>Название</th>
+              <th className={styles.status}>Статус</th>
+              <th className={styles.executor}>Испольнитель</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className={styles.applicationsBody}>
             {applications?.map((el) => {
               return (
-                <tr key={el.id} onClick={() => toggleEditForm(el.id)}>
-                  <td>{el.id}</td>
-                  <td>{el.name}</td>
-                  <td>{el.statusName}</td>
-                  <td>{el.initiatorName}</td>
+                <tr
+                  key={el.id}
+                  onClick={() => toggleEditForm(el.id)}
+                  className={styles.applicationsBodyTr}>
+                  <td className={styles.id}>{el.id}</td>
+                  <td className={styles.name}>{el.name}</td>
+                  <td className={styles.status}>{el.statusName}</td>
+                  <td className={styles.executor}>{el.executorName}</td>
                 </tr>
               );
             })}

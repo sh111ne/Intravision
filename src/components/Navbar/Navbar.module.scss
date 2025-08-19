@@ -9,16 +9,23 @@
     padding: 0;
     margin: 0;
 
-    &El {
+    &Logo {
       display: flex;
-      flex-direction: column;
-      padding: 15px 10px;
       justify-content: center;
       align-items: center;
+      padding: 15px 10px;
+    }
+
+    &El {
       cursor: pointer;
       transition: 0.2s;
 
       &Text {
+        display: flex;
+        flex-direction: column;
+        padding: 15px 10px;
+        justify-content: center;
+        align-items: center;
         text-decoration: none;
         color: #fff;
         font-size: 12px;

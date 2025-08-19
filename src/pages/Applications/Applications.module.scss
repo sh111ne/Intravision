@@ -1,12 +1,135 @@
-.content {
+.wrapper {
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.title {
+  display: flex;
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #d2e0ed;
+  box-sizing: border-box;
+
+  .search {
+    position: relative;
+    width: 600px;
+
+    &Input {
+      width: 100%;
+      padding: 10px 30px 10px 15px;
+      border-radius: 20px;
+      border: 2px solid #fff;
+      box-sizing: border-box;
+      transition: 0.2s;
+      outline: none;
+
+      &:hover,
+      &:focus {
+        border: 2px solid #add4f2;
+      }
+    }
+
+    &Lens {
+      position: absolute;
+      right: 7px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 25px;
+      height: 25px;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+  }
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   position: relative;
+
+  .create {
+    margin: 20px;
+
+    &Button {
+      padding: 10px 20px;
+      color: #fff;
+      background-color: #008cf1;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      outline: none;
+
+      &:focus {
+        border: none;
+      }
+    }
+  }
+
+  .applications {
+    width: 100%;
+    border-collapse: collapse;
+    flex: 1;
+    display: block;
+    overflow-y: auto;
+
+    thead,
+    tbody {
+      display: table;
+      width: 100%;
+    }
+
+    &Head {
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 1;
+      &Tr {
+        border-bottom: 2px solid #f2f3f4;
+      }
+    }
+
+    &Body {
+      &Tr {
+        border-bottom: 2px solid #fcfcfc;
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+
+    .id,
+    .name,
+    .status,
+    .executor {
+      text-align: left;
+      padding: 10px;
+    }
+
+    .id {
+      width: 100px;
+    }
+
+    .name {
+      width: 350px;
+    }
+
+    .status {
+      width: 100px;
+    }
+  }
 
   .formContainer {
     position: absolute;
+    z-index: 100;
     background-color: aquamarine;
-    height: 100%;
     right: 0;
+    overflow-y: auto;
+    height: 100%;
+    width: 700px;
   }
 }

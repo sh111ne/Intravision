@@ -64,5 +64,29 @@ export type NewApplication = {
 };
 
 export type SelectModalProps = {
-  obj: { id: number; name: string; rgb?: string }[];
+  obj: Status[] | User[] | Priority[];
+  setNewApplication: (updater: (prev: ModifiedApplication) => ModifiedApplication) => void;
+  name: string;
+  setVisible: (value: boolean) => void;
+};
+
+export type ModifiedApplication = {
+  id: number;
+  name: string;
+  description: string;
+  comment: string;
+  price: number;
+  taskTypeId: number;
+  statusId: number;
+  priorityId: number;
+  serviceId: number;
+  resolutionDatePlan: string;
+  initiatorId: number;
+  executorId: number;
+  executorGroupId: number;
+};
+
+export type CreateCommentProps = {
+  newApplication: ModifiedApplication;
+  onCommentAdded: () => void;
 };
