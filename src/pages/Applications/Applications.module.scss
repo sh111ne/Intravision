@@ -75,6 +75,24 @@
     flex: 1;
     display: block;
     overflow-y: auto;
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #fff;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #008cf1;
+      border-radius: 4px;
+      border: 2px solid #008cf1;
+
+      &:hover {
+        background: #008cf1;
+      }
+    }
 
     thead,
     tbody {
@@ -88,17 +106,46 @@
       background: white;
       z-index: 1;
       &Tr {
-        border-bottom: 2px solid #f2f3f4;
+        border-bottom: 2px solid #aeb3b7;
+        position: relative;
+
+        th {
+          position: relative;
+        }
+
+        th:not(:first-child)::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          height: 50%;
+          width: 2px;
+          background-color: #aeb3b7;
+          transform: translateY(-50%);
+        }
       }
     }
 
     &Body {
       &Tr {
-        border-bottom: 2px solid #fcfcfc;
+        border-bottom: 2px solid #f2f3f4;
 
         &:last-child {
           border-bottom: none;
         }
+      }
+    }
+
+    .lineCell {
+      .lineWhite {
+        opacity: 0;
+      }
+      .line,
+      .lineWhite {
+        height: 40px;
+        width: 5px;
+        border-radius: 5px;
+        background-color: #f05f9a;
       }
     }
 
@@ -119,17 +166,25 @@
     }
 
     .status {
-      width: 100px;
+      width: 130px;
+
+      .statusSpan {
+        padding: 5px 15px;
+        border-radius: 10px;
+        white-space: nowrap;
+        font-size: 12px;
+        color: #fff;
+      }
     }
   }
 
   .formContainer {
     position: absolute;
     z-index: 100;
-    background-color: aquamarine;
+    background-color: #ebf3f6;
     right: 0;
     overflow-y: auto;
     height: 100%;
-    width: 700px;
+    width: 1000px;
   }
 }

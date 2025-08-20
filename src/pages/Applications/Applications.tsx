@@ -20,9 +20,9 @@ import CreateApplication from '../../components/CreateApplication/CreateApplicat
 import EditApplication from '../../components/EditApplication/EditApplication';
 
 import lens from '/img/searchicon.svg?url';
+import { tenantguid } from '../../shared/constants';
 
 const Applications = () => {
-  const tenantguid = '3c1d64a0-ace0-40ed-9901-7a20bf7f7d34';
   const { applications } = useAppSelector((state) => state.applicationsSlice);
   const dispatch = useAppDispatch();
   const { data: listApplications, error, isLoading, isSuccess } = useGetTasksQuery(tenantguid);
@@ -63,7 +63,7 @@ const Applications = () => {
     if (users) {
       dispatch(setUsers(users));
     }
-  }, [statuses, priorities, users, dispatch]);
+  }, [statuses, priorities, users, dispatch]); //Внимание
 
   console.log(listApplications);
   console.log(activeApplication);
@@ -78,35 +78,60 @@ const Applications = () => {
       </div>
       <div className={styles.content}>
         <div className={styles.create}>
-          <button className={styles.createButton} onClick={toggleCreateFormButton}>
+          <button
+            className={styles.createButton}
+            onClick={toggleCreateFormButton}
+            disabled={isLoading ? true : false}>
             {isCreateFormOpen ? 'Закрыть' : 'Создать заявку'}
           </button>
         </div>
-        <table className={styles.applications}>
-          <thead className={styles.applicationsHead}>
-            <tr className={styles.applicationsHeadTr}>
-              <th className={styles.id}>ID</th>
-              <th className={styles.name}>Название</th>
-              <th className={styles.status}>Статус</th>
-              <th className={styles.executor}>Испольнитель</th>
-            </tr>
-          </thead>
-          <tbody className={styles.applicationsBody}>
-            {applications?.map((el) => {
-              return (
-                <tr
-                  key={el.id}
-                  onClick={() => toggleEditForm(el.id)}
-                  className={styles.applicationsBodyTr}>
-                  <td className={styles.id}>{el.id}</td>
-                  <td className={styles.name}>{el.name}</td>
-                  <td className={styles.status}>{el.statusName}</td>
-                  <td className={styles.executor}>{el.executorName}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        {isLoading ? (
+          <div className="loading">
+            <span className="loader"></span>
+          </div>
+        ) : error ? (
+          <div className="error">Ошибка</div>
+        ) : (
+          <table className={styles.applications}>
+            <thead className={styles.applicationsHead}>
+              <tr className={styles.applicationsHeadTr}>
+                <th className={styles.lineCell}>
+                  <div className={styles.lineWhite}></div>
+                </th>
+                <th className={styles.id}>ID</th>
+                <th className={styles.name}>Название</th>
+                <th className={styles.status}>Статус</th>
+                <th className={styles.executor}>Испольнитель</th>
+              </tr>
+            </thead>
+            <tbody className={styles.applicationsBody}>
+              {applications?.map((el) => {
+                return (
+                  <tr
+                    key={el.id}
+                    onClick={() => toggleEditForm(el.id)}
+                    className={styles.applicationsBodyTr}>
+                    <td className={styles.lineCell}>
+                      <div className={styles.line}></div>
+                    </td>
+                    <td className={styles.id}>{el.id}</td>
+                    <td className={styles.name}>
+                      {el.name.length > 75 ? el.name.substring(0, 75) + '...' : el.name}
+                    </td>
+                    <td className={styles.status}>
+                      <span className={styles.statusSpan} style={{ backgroundColor: el.statusRgb }}>
+                        {el.statusName.length > 14
+                          ? el.statusName.substring(0, 12) + '...'
+                          : el.statusName}
+                      </span>
+                    </td>
+                    <td className={styles.executor}>{el.executorName}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
         {isCreateFormOpen && !activeApplication && (
           <div className={styles.formContainer}>
             <CreateApplication onClose={toggleCreateForm} setActive={setActiveApplication} />

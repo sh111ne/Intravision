@@ -1,0 +1,58 @@
+@mixin buttonConst {
+  padding: 10px 20px;
+  color: #fff;
+  width: 130px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+
+  &:focus {
+    border: none;
+  }
+}
+
+.contentTextCommCreate {
+  .form {
+    display: flex;
+    flex-direction: column;
+    .label {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      .title {
+        color: #aeb3b7;
+        font-size: 14px;
+      }
+      .input {
+        width: 600px;
+        height: 40px;
+        border: 2px solid #ebf0f3;
+        border-radius: 5px;
+        padding: 10px;
+        outline: none;
+        transition: 0.2s;
+
+        &:focus {
+          border: 2px solid #add4f2;
+        }
+      }
+    }
+    .buttonSubmit {
+      background-color: #008cf1;
+      @include buttonConst;
+      &:disabled {
+        @include buttonConst;
+        background-color: #aeb3b7;
+      }
+    }
+  }
+
+  .error {
+    height: 20px;
+
+    &Comment {
+      color: #e65c5c;
+    }
+  }
+}

@@ -1,6 +1,6 @@
 const Base = () => {
   return (
-    <div>
+    <div className="page">
       <h1>Base</h1>
     </div>
   );

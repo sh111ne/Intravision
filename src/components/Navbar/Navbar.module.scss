@@ -30,6 +30,11 @@
         color: #fff;
         font-size: 12px;
         text-align: center;
+        outline: none;
+
+        &:focus {
+          border: none;
+        }
       }
 
       .svg {

@@ -1,19 +1,15 @@
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import styles from './CreateComment.module.scss';
 import { useUpdateTaskMutation } from '../../api/applicationsApi';
-import type { CreateCommentProps } from '../../@types/types';
-
-type NewComment = {
-  comment: string;
-};
+import type { CreateCommentProps, NewComment } from '../../@types/types';
+import { tenantguid } from '../../shared/constants';
 
 const CreateComment = ({ newApplication, onCommentAdded }: CreateCommentProps) => {
-  const tenantguid = '3c1d64a0-ace0-40ed-9901-7a20bf7f7d34';
   const { register, handleSubmit, reset, watch } = useForm<NewComment>({
     mode: 'onChange',
   });
 
-  const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
+  const [updateTask, { isLoading: isUpdating, error }] = useUpdateTaskMutation();
 
   const commentValue = watch('comment');
   const isDisabled = !commentValue || commentValue.trim() === '';
@@ -37,18 +33,23 @@ const CreateComment = ({ newApplication, onCommentAdded }: CreateCommentProps) =
   };
   return (
     <div className={styles.contentTextCommCreate}>
-      <span>Добавление комментария</span>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="comment" className={styles.label}>
+          <span className={styles.title}>Добавление комментария</span>
           <input id="comment" className={styles.input} {...register('comment')} />
           <span className={styles.errorInput}></span>
         </label>
-        <div className={styles.buttonsBottom}>
-          <button type="submit" disabled={isDisabled} className={styles.buttonSubmit}>
-            Сохранить
-          </button>
-        </div>
+        <button type="submit" disabled={isDisabled} className={styles.buttonSubmit}>
+          {isUpdating ? 'Сохранение' : 'Сохранить'}
+        </button>
       </form>
+      <div className={styles.error}>
+        {error && (
+          <span className={styles.errorComment}>
+            Ошибка отправки комментария, попробуйте позже.
+          </span>
+        )}
+      </div>
     </div>
   );
 };

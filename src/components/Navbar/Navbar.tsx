@@ -18,13 +18,13 @@ const Navbar = () => {
           <img src={logo} alt="logo" className={styles.logo} />
         </li>
         <li className={styles.listEl}>
-          <Link to="/" className={styles.listElText}>
+          <Link to="/base" className={styles.listElText}>
             <img src={book} alt="book" className={styles.svg} />
             <span>База знаний</span>
           </Link>
         </li>
         <li className={styles.listEl}>
-          <Link to="/applications" className={styles.listElText}>
+          <Link to="/" className={styles.listElText}>
             <img src={paper} alt="paper" className={styles.svg} />
             <span>Заявки</span>
           </Link>

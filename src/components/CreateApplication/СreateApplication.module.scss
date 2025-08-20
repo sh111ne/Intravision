@@ -1,0 +1,111 @@
+@mixin inputConst {
+  width: 600px;
+  border: 2px solid #ebf0f3;
+  border-radius: 5px;
+  padding: 10px;
+  outline: none;
+  transition: 0.2s;
+
+  &:focus {
+    border: 2px solid #add4f2;
+  }
+}
+
+@mixin buttonConst {
+  padding: 10px 20px;
+  color: #fff;
+  width: 120px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+
+  &:focus {
+    border: none;
+  }
+}
+
+.createBlock {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 25px;
+  background-color: #1a4977;
+  border: 2px solid #aeb3b7;
+  flex-shrink: 0;
+
+  &Text {
+    color: #fff;
+    font-size: 20px;
+  }
+
+  &Close {
+    width: 25px;
+    cursor: pointer;
+  }
+}
+
+.content {
+  padding: 40px;
+  border-left: 2px solid #aeb3b7;
+  flex: 1;
+  overflow-y: auto;
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .label {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      &Text {
+        color: #aeb3b7;
+        font-size: 14px;
+      }
+
+      .inputName {
+        @include inputConst;
+        height: 70px;
+      }
+
+      .inputDesc {
+        @include inputConst;
+        height: 100px;
+      }
+
+      .errorInput {
+        color: #e65c5c;
+        font-size: 14px;
+        height: 20px;
+      }
+    }
+
+    .buttonSubmit {
+      background-color: #008cf1;
+      @include buttonConst;
+      &:disabled {
+        @include buttonConst;
+        background-color: #aeb3b7;
+      }
+    }
+  }
+
+  .errorBlock {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+
+    span {
+      font-size: 24;
+      color: #e65c5c;
+    }
+  }
+}

@@ -90,3 +90,12 @@ export type CreateCommentProps = {
   newApplication: ModifiedApplication;
   onCommentAdded: () => void;
 };
+
+export type NewComment = {
+  comment: string;
+};
+
+export type CreateApplicationProps = {
+  onClose: () => void;
+  setActive: (id: number) => void;
+};

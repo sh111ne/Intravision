@@ -13,6 +13,10 @@ import SelectModal from '../SelectModal/SelectModal';
 import CreateComment from '../CreateComment/CreateComment';
 
 import type { ModifiedApplication } from '../../@types/types';
+import { tenantguid } from '../../shared/constants';
+
+import close from '/img/close.svg?url';
+import pen from '/img/pen.svg?url';
 
 type EditApplicationProps = {
   active: number;
@@ -20,7 +24,6 @@ type EditApplicationProps = {
 };
 
 const EditApplication = ({ active, setActive }: EditApplicationProps) => {
-  const tenantguid = '3c1d64a0-ace0-40ed-9901-7a20bf7f7d34';
   const {
     data: task,
     isLoading,
@@ -65,6 +68,11 @@ const EditApplication = ({ active, setActive }: EditApplicationProps) => {
     return status ? status.name : 'Неизвестный статус';
   };
 
+  const getStatusRgbById = (statusId: number) => {
+    const status = statuses.find((s) => s.id === statusId);
+    return status ? status.rgb : '';
+  };
+
   const getPriorityNameById = (priorityId: number) => {
     const priority = priorities.find((p) => p.id === priorityId);
     return priority ? priority.name : 'Неизвестный приоритет';
@@ -87,6 +95,7 @@ const EditApplication = ({ active, setActive }: EditApplicationProps) => {
       setActive(undefined);
 
       refetchTasks();
+      refetchOneTask();
     } catch (err) {
       console.error('Ошибка при обновлении заявки:', err);
     }
@@ -117,29 +126,58 @@ const EditApplication = ({ active, setActive }: EditApplicationProps) => {
   return (
     <>
       {isLoading ? (
-        <div>Загрузка...</div>
+        <div className="loading">
+          <span className="loader"></span>
+        </div>
       ) : error ? (
-        <div>Ошибка!</div>
+        <div className={styles.errorBlock}>
+          <span>Ошибка отправки формы</span>
+        </div>
       ) : task ? (
         <div className={styles.editBlock}>
           <div className={styles.title}>
-            <span>{task.id}</span>
-            <span>{task.name}</span>
-            <button onClick={() => setActive(undefined)}>X</button>
+            <div className={styles.titleText}>
+              <span className={styles.titleTextId}>№ {task.id}</span>
+              <span className={styles.titleTextName}>
+                {task.name.length > 135 ? task.name.substring(0, 132) + '...' : task.name}
+              </span>
+            </div>
+            <img
+              src={close}
+              alt="close"
+              onClick={() => setActive(undefined)}
+              className={styles.titleClose}
+            />
           </div>
           <div className={styles.content}>
             <div className={styles.contentText}>
-              <div className={styles.contentTextDesc}>{task.description}</div>
+              <div className={styles.contentTextDesc}>
+                <span>Описание</span>
+                <p>{task.description}</p>
+              </div>
               <CreateComment newApplication={newApplication} onCommentAdded={refetchOneTask} />
               <ul className={styles.contentTextCommList}>
                 {task.lifetimeItems &&
                   task.lifetimeItems.map((el) => {
                     return (
-                      <li key={el.id}>
+                      <li key={el.id} className={styles.comment}>
                         {el.fieldName ? (
                           <></>
                         ) : (
-                          <div className={styles.comment}>{el.comment} - коммент</div>
+                          <div className={styles.commentBlock}>
+                            <div className={styles.commentBlockUser}>
+                              <div className={styles.avatar}></div>
+                              <div className={styles.userData}>
+                                <span className={styles.userDataName}>{el.userName}</span>
+                                <span className={styles.userDataDate}>
+                                  {el.createdAt.split('T')[0]}
+                                </span>
+                              </div>
+                            </div>
+                            <div className={styles.commentBlockMessage}>
+                              <p>{el.comment}</p>
+                            </div>
+                          </div>
                         )}
                       </li>
                     );
@@ -148,10 +186,21 @@ const EditApplication = ({ active, setActive }: EditApplicationProps) => {
             </div>
             <div className={styles.contentTags}>
               <div className={styles.contentTagsStatus}>
-                <span>Статус</span>
-                <span onClick={() => setVisibleStatus(!visibleStatus)}>
-                  {getStatusNameById(newApplication.statusId)}
+                <div
+                  className={styles.contentTagsStatusColor}
+                  style={
+                    newApplication.statusId !== task.statusId
+                      ? { backgroundColor: getStatusRgbById(newApplication.statusId) }
+                      : { backgroundColor: task.statusRgb }
+                  }></div>
+                <span
+                  className={styles.contentTagsStatusText}
+                  onClick={() => setVisibleStatus(!visibleStatus)}>
+                  {newApplication.statusId !== task.statusId
+                    ? getStatusNameById(newApplication.statusId)
+                    : task.statusName}
                 </span>
+                <img src={pen} alt="pen" className={styles.pen} />
                 {visibleStatus && (
                   <SelectModal
                     obj={statuses}
@@ -162,17 +211,23 @@ const EditApplication = ({ active, setActive }: EditApplicationProps) => {
                 )}
               </div>
               <div className={styles.contentTagsApplicant}>
-                <span>Заявитель</span>
-                <span>{task.initiatorName}</span>
+                <span className={styles.contentTagsApplicantName}>Заявитель</span>
+                <span className={styles.contentTagsApplicantValue}>{task.initiatorName}</span>
               </div>
               <div className={styles.contentTagsCreated}>
-                <span>Создан</span>
-                <span>{task.createdAt && task.createdAt.split('T')[0].replace(/-/g, '.')}</span>
+                <span className={styles.contentTagsCreatedName}>Создан</span>
+                <span className={styles.contentTagsCreatedValue}>
+                  {task.createdAt && task.createdAt.split('T')[0].replace(/-/g, '.')}
+                </span>
               </div>
               <div className={styles.contentTagsExecutor}>
-                <span>Испольнитель</span>
-                <span onClick={() => setVisibleUsers(!visibleUser)}>
-                  {getUserNameById(newApplication.executorId)}
+                <span className={styles.contentTagsExecutorName}>Испольнитель</span>
+                <span
+                  onClick={() => setVisibleUsers(!visibleUser)}
+                  className={styles.contentTagsExecutorValue}>
+                  {newApplication.executorId !== task.executorId
+                    ? getUserNameById(newApplication.executorId)
+                    : task.executorName}
                 </span>
                 {visibleUser && (
                   <SelectModal
@@ -184,9 +239,13 @@ const EditApplication = ({ active, setActive }: EditApplicationProps) => {
                 )}
               </div>
               <div className={styles.contentTagsPriority}>
-                <span>Приоритет</span>
-                <span onClick={() => setVisiblePriority(!visiblePriority)}>
-                  {getPriorityNameById(newApplication.priorityId)}
+                <span className={styles.contentTagsPriorityName}>Приоритет</span>
+                <span
+                  onClick={() => setVisiblePriority(!visiblePriority)}
+                  className={styles.contentTagsPriorityValue}>
+                  {newApplication.priorityId !== task.priorityId
+                    ? getPriorityNameById(newApplication.priorityId)
+                    : task.priorityName}
                 </span>
                 {visiblePriority && (
                   <SelectModal
@@ -198,15 +257,15 @@ const EditApplication = ({ active, setActive }: EditApplicationProps) => {
                 )}
               </div>
               <div className={styles.contentTagsTerm}>
-                <span>Срок</span>
-                <span>
+                <span className={styles.contentTagsTermName}>Срок</span>
+                <span className={styles.contentTagsTermValue}>
                   {task.resolutionDatePlan
                     ? task.resolutionDatePlan.split('T')[0].replace(/-/g, '.')
                     : '-'}
                 </span>
               </div>
               <div className={styles.contentTagsOther}>
-                <span>Теги</span>
+                <span className={styles.contentTagsOtherName}>Теги</span>
                 <ul className={styles.tagsList}>
                   {task.tags &&
                     task.tags.map((tag) => {
@@ -222,7 +281,9 @@ const EditApplication = ({ active, setActive }: EditApplicationProps) => {
                 {newApplication.statusId !== task.statusId ||
                 newApplication.priorityId !== task.priorityId ||
                 newApplication.executorId !== task.executorId ? (
-                  <button onClick={onChangeTags}>{isUpdating ? 'Изменение...' : 'Изменить'}</button>
+                  <button onClick={onChangeTags} className={styles.contentTagsEditButton}>
+                    {isUpdating ? 'Изменение...' : 'Изменить'}
+                  </button>
                 ) : (
                   <></>
                 )}
