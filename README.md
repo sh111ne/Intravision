@@ -1,69 +1,35 @@
-# React + TypeScript + Vite
+# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Для запуска необходимо:
 
-Currently, two official plugins are available:
+1. cd IntravisionApp
+2. npm install
+3. ВНИМАНИЕ! ЗАПУСК - npm run dev
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Реализовано:
 
-## Expanding the ESLint configuration
+1. Вывод все заявок
+2. Создание новой заявки (после создания заявки автоматически открывается окно редактирования данной заявки)
+3. Добавление комментария и автоматическое обновление окна, с последующим вывод комментария
+4. Редактирование статуса, исполнителя и приоритета через модальное окно с автоматическим обновлением (смена приоритета не работает, но по логике реализована правильно)
+5. Независимые скроллы для заявок и редактирования
+6. Переключение по страницам слева в сайдбаре
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+===================================================================
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Не реализовано:
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+1. Адаптивная верстка, так как не было в требованиях (все работает до 1095 пикселей в длину)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+===================================================================
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+По поводу всего остального:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. tenantguid захардкожен и находится в файле constants.ts для постоянной работы с одними и теми же заявками (если нужно, могу переделать на получение запроса в самом начале)
+2. На первой заявке под id 97630 выходят ошибки в консоль из-за того, что неправильно кинул запрос на редактирование и добавились старые теги, в key index не стал класть
+3. Запрос на изменение отправляется в виде полного объекта, так как не дает отправить отдельно id и statusID к примеру, просит другие поля (тоже самое и с комментарием)
+4. Полоски в таблице заявок слева от id сделаны в верстке одинакового цвета, так как не понял от чего зависит цвет
+5. Срок в редактировании выводится неправильно, вставил то, что больше всего подходило
+6. Кнопка создания заявки не работает пока идет загрузка заявок
+7. Картинки из фотошопа не стал брать, использовал свои svg, наверно это критично, но по-другому не получилось
+8. Поиск сверху не реализовывал как и сказано
