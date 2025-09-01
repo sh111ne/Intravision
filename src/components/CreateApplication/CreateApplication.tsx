@@ -43,7 +43,7 @@ const CreateApplication = ({ onClose, setActive }: CreateApplicationProps) => {
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <label htmlFor="name" className={styles.label}>
             <span className={styles.labelText}>Название</span>
-            <input
+            <textarea
               id="name"
               className={styles.inputName}
               {...register('name', {
@@ -54,7 +54,7 @@ const CreateApplication = ({ onClose, setActive }: CreateApplicationProps) => {
           </label>
           <label htmlFor="description" className={styles.label}>
             <span className={styles.labelText}>Описание</span>
-            <input
+            <textarea
               id="description"
               className={styles.inputDesc}
               {...register('description', {

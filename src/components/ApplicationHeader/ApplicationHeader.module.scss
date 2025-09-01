@@ -1,0 +1,32 @@
+.title {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 25px;
+  background-color: #1a4977;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border: 2px solid #aeb3b7;
+  flex-shrink: 0;
+
+  &Text {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    &Id,
+    &Name {
+      font-size: 20px;
+      color: #fff;
+    }
+
+    &Id {
+      min-width: 90px;
+    }
+  }
+
+  &Close {
+    width: 25px;
+    cursor: pointer;
+  }
+}

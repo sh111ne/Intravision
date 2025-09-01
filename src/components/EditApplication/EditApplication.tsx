@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 import {
   useGetOneTaskQuery,
   useGetTasksQuery,
@@ -9,19 +8,18 @@ import { useAppSelector } from '../../redux/store';
 
 import styles from './EditApplication.module.scss';
 
-import SelectModal from '../SelectModal/SelectModal';
+import ApplicationHeader from '../ApplicationHeader/ApplicationHeader';
+import ApplicationTags from '../ApplicationTags/ApplicationTags';
+import CommentItem from '../CommentItem/CommentItem';
 import CreateComment from '../CreateComment/CreateComment';
 
 import type { ModifiedApplication } from '../../@types/types';
 import { tenantguid } from '../../shared/constants';
 
-import close from '/img/close.svg?url';
-import pen from '/img/pen.svg?url';
-
-type EditApplicationProps = {
+interface EditApplicationProps {
   active: number;
   setActive: (id: number | undefined) => void;
-};
+}
 
 const EditApplication = ({ active, setActive }: EditApplicationProps) => {
   const {
@@ -29,17 +27,11 @@ const EditApplication = ({ active, setActive }: EditApplicationProps) => {
     isLoading,
     error,
     refetch: refetchOneTask,
-  } = useGetOneTaskQuery(
-    {
-      tenantguid: tenantguid,
-      id: active,
-    },
-    {
-      refetchOnMountOrArgChange: true,
-    },
-  );
+  } = useGetOneTaskQuery({ tenantguid, id: active }, { refetchOnMountOrArgChange: true });
+
   const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
   const { refetch: refetchTasks } = useGetTasksQuery(tenantguid);
+  const { statuses, priorities, users } = useAppSelector((state) => state.applicationsSlice);
 
   const [newApplication, setNewApplication] = useState<ModifiedApplication>({
     id: 0,
@@ -57,48 +49,38 @@ const EditApplication = ({ active, setActive }: EditApplicationProps) => {
     executorGroupId: 0,
   });
 
-  const { statuses, priorities, users } = useAppSelector((state) => state.applicationsSlice);
+  const getStatusNameById = (statusId: number) =>
+    statuses.find((s) => s.id === statusId)?.name || 'Неизвестный статус';
 
-  const [visibleStatus, setVisibleStatus] = useState(false);
-  const [visibleUser, setVisibleUsers] = useState(false);
-  const [visiblePriority, setVisiblePriority] = useState(false);
+  const getStatusRgbById = (statusId: number) => statuses.find((s) => s.id === statusId)?.rgb || '';
 
-  const getStatusNameById = (statusId: number) => {
-    const status = statuses.find((s) => s.id === statusId);
-    return status ? status.name : 'Неизвестный статус';
-  };
+  const getPriorityNameById = (priorityId: number) =>
+    priorities.find((p) => p.id === priorityId)?.name || 'Неизвестный приоритет';
 
-  const getStatusRgbById = (statusId: number) => {
-    const status = statuses.find((s) => s.id === statusId);
-    return status ? status.rgb : '';
-  };
-
-  const getPriorityNameById = (priorityId: number) => {
-    const priority = priorities.find((p) => p.id === priorityId);
-    return priority ? priority.name : 'Неизвестный приоритет';
-  };
-
-  const getUserNameById = (userId: number) => {
-    const user = users.find((u) => u.id === userId);
-    return user ? user.name : 'Не назначен';
-  };
+  const getUserNameById = (userId: number) =>
+    users.find((u) => u.id === userId)?.name || 'Не назначен';
 
   const onChangeTags = async () => {
+    if (!task) return;
+
     try {
-      if (!task) return;
-
-      await updateTask({
-        tenantguid,
-        taskData: newApplication,
-      }).unwrap();
-
-      setActive(undefined);
-
+      await updateTask({ tenantguid, taskData: newApplication }).unwrap();
+      setNewApplication((prev) => ({ ...prev, comment: '' }));
       refetchTasks();
       refetchOneTask();
     } catch (err) {
       console.error('Ошибка при обновлении заявки:', err);
     }
+  };
+
+  const hasNoChanges = () => {
+    if (!task) return true;
+    return (
+      newApplication.statusId === task.statusId &&
+      newApplication.priorityId === task.priorityId &&
+      newApplication.executorId === task.executorId &&
+      newApplication.comment === ''
+    );
   };
 
   useEffect(() => {
@@ -121,180 +103,65 @@ const EditApplication = ({ active, setActive }: EditApplicationProps) => {
     }
   }, [task]);
 
-  console.log(task, 'заявка');
-  console.log(newApplication, 'На изменение');
+  if (isLoading)
+    return (
+      <div className="loading">
+        <span className="loader"></span>
+      </div>
+    );
+  if (error)
+    return (
+      <div className={styles.errorBlock}>
+        <span>Ошибка загрузки заявки</span>
+      </div>
+    );
+  if (!task) return <div>Заявка не найдена</div>;
+
   return (
-    <>
-      {isLoading ? (
-        <div className="loading">
-          <span className="loader"></span>
-        </div>
-      ) : error ? (
-        <div className={styles.errorBlock}>
-          <span>Ошибка отправки формы</span>
-        </div>
-      ) : task ? (
-        <div className={styles.editBlock}>
-          <div className={styles.title}>
-            <div className={styles.titleText}>
-              <span className={styles.titleTextId}>№ {task.id}</span>
-              <span className={styles.titleTextName}>
-                {task.name.length > 135 ? task.name.substring(0, 132) + '...' : task.name}
-              </span>
-            </div>
-            <img
-              src={close}
-              alt="close"
-              onClick={() => setActive(undefined)}
-              className={styles.titleClose}
-            />
+    <div className={styles.editBlock}>
+      <ApplicationHeader task={task} onClose={() => setActive(undefined)} />
+
+      <div className={styles.content}>
+        <div className={styles.contentText}>
+          <div className={styles.contentTextDesc}>
+            <span>Описание</span>
+            <p>{task.description}</p>
           </div>
-          <div className={styles.content}>
-            <div className={styles.contentText}>
-              <div className={styles.contentTextDesc}>
-                <span>Описание</span>
-                <p>{task.description}</p>
-              </div>
-              <CreateComment newApplication={newApplication} onCommentAdded={refetchOneTask} />
-              <ul className={styles.contentTextCommList}>
-                {task.lifetimeItems &&
-                  task.lifetimeItems.map((el) => {
-                    return (
-                      <li key={el.id} className={styles.comment}>
-                        {el.fieldName ? (
-                          <></>
-                        ) : (
-                          <div className={styles.commentBlock}>
-                            <div className={styles.commentBlockUser}>
-                              <div className={styles.avatar}></div>
-                              <div className={styles.userData}>
-                                <span className={styles.userDataName}>{el.userName}</span>
-                                <span className={styles.userDataDate}>
-                                  {el.createdAt.split('T')[0]}
-                                </span>
-                              </div>
-                            </div>
-                            <div className={styles.commentBlockMessage}>
-                              <p>{el.comment}</p>
-                            </div>
-                          </div>
-                        )}
-                      </li>
-                    );
-                  })}
-              </ul>
-            </div>
-            <div className={styles.contentTags}>
-              <div className={styles.contentTagsStatus}>
-                <div
-                  className={styles.contentTagsStatusColor}
-                  style={
-                    newApplication.statusId !== task.statusId
-                      ? { backgroundColor: getStatusRgbById(newApplication.statusId) }
-                      : { backgroundColor: task.statusRgb }
-                  }></div>
-                <span
-                  className={styles.contentTagsStatusText}
-                  onClick={() => setVisibleStatus(!visibleStatus)}>
-                  {newApplication.statusId !== task.statusId
-                    ? getStatusNameById(newApplication.statusId)
-                    : task.statusName}
-                </span>
-                <img src={pen} alt="pen" className={styles.pen} />
-                {visibleStatus && (
-                  <SelectModal
-                    obj={statuses}
-                    setNewApplication={setNewApplication}
-                    name={'Статус'}
-                    setVisible={setVisibleStatus}
-                  />
-                )}
-              </div>
-              <div className={styles.contentTagsApplicant}>
-                <span className={styles.contentTagsApplicantName}>Заявитель</span>
-                <span className={styles.contentTagsApplicantValue}>{task.initiatorName}</span>
-              </div>
-              <div className={styles.contentTagsCreated}>
-                <span className={styles.contentTagsCreatedName}>Создан</span>
-                <span className={styles.contentTagsCreatedValue}>
-                  {task.createdAt && task.createdAt.split('T')[0].replace(/-/g, '.')}
-                </span>
-              </div>
-              <div className={styles.contentTagsExecutor}>
-                <span className={styles.contentTagsExecutorName}>Испольнитель</span>
-                <span
-                  onClick={() => setVisibleUsers(!visibleUser)}
-                  className={styles.contentTagsExecutorValue}>
-                  {newApplication.executorId !== task.executorId
-                    ? getUserNameById(newApplication.executorId)
-                    : task.executorName}
-                </span>
-                {visibleUser && (
-                  <SelectModal
-                    obj={users}
-                    setNewApplication={setNewApplication}
-                    name={'Исполнитель'}
-                    setVisible={setVisibleUsers}
-                  />
-                )}
-              </div>
-              <div className={styles.contentTagsPriority}>
-                <span className={styles.contentTagsPriorityName}>Приоритет</span>
-                <span
-                  onClick={() => setVisiblePriority(!visiblePriority)}
-                  className={styles.contentTagsPriorityValue}>
-                  {newApplication.priorityId !== task.priorityId
-                    ? getPriorityNameById(newApplication.priorityId)
-                    : task.priorityName}
-                </span>
-                {visiblePriority && (
-                  <SelectModal
-                    obj={priorities}
-                    setNewApplication={setNewApplication}
-                    name={'Приоритет'}
-                    setVisible={setVisiblePriority}
-                  />
-                )}
-              </div>
-              <div className={styles.contentTagsTerm}>
-                <span className={styles.contentTagsTermName}>Срок</span>
-                <span className={styles.contentTagsTermValue}>
-                  {task.resolutionDatePlan
-                    ? task.resolutionDatePlan.split('T')[0].replace(/-/g, '.')
-                    : '-'}
-                </span>
-              </div>
-              <div className={styles.contentTagsOther}>
-                <span className={styles.contentTagsOtherName}>Теги</span>
-                <ul className={styles.tagsList}>
-                  {task.tags &&
-                    task.tags.map((tag) => {
-                      return (
-                        <li key={tag.id} className={styles.tag}>
-                          {tag.name}
-                        </li>
-                      );
-                    })}
-                </ul>
-              </div>
-              <div className={styles.contentTagsEdit}>
-                {newApplication.statusId !== task.statusId ||
-                newApplication.priorityId !== task.priorityId ||
-                newApplication.executorId !== task.executorId ? (
-                  <button onClick={onChangeTags} className={styles.contentTagsEditButton}>
-                    {isUpdating ? 'Изменение...' : 'Изменить'}
-                  </button>
-                ) : (
-                  <></>
-                )}
-              </div>
-            </div>
+
+          <CreateComment newApplication={newApplication} setNewApplication={setNewApplication} />
+
+          <div className={styles.contentTagsEdit}>
+            <button
+              onClick={onChangeTags}
+              className={styles.contentTagsEditButton}
+              disabled={isUpdating || hasNoChanges()}>
+              {isUpdating ? 'Сохранение' : 'Сохранить'}
+            </button>
           </div>
+
+          <ul className={styles.contentTextCommList}>
+            {task.lifetimeItems
+              ?.filter((item) => !item.fieldName)
+              .map((comment) => (
+                <CommentItem key={comment.id} comment={comment} />
+              ))}
+          </ul>
         </div>
-      ) : (
-        <div>Заявка не найдена</div>
-      )}
-    </>
+
+        <ApplicationTags
+          task={task}
+          newApplication={newApplication}
+          setNewApplication={setNewApplication}
+          statuses={statuses}
+          priorities={priorities}
+          users={users}
+          getStatusNameById={getStatusNameById}
+          getStatusRgbById={getStatusRgbById}
+          getPriorityNameById={getPriorityNameById}
+          getUserNameById={getUserNameById}
+        />
+      </div>
+    </div>
   );
 };
 

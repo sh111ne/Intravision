@@ -1,0 +1,57 @@
+.comment {
+  &Block {
+    display: flex;
+    gap: 10px;
+    padding-bottom: 30px;
+    margin-right: 5px;
+
+    &User {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 10px;
+
+      .avatar {
+        background-color: #fff;
+        border: 2px solid #dfe2e5;
+        border-radius: 100px;
+        width: 40px;
+        height: 40px;
+      }
+    }
+    &Message {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      box-sizing: border-box;
+      padding-top: 10px;
+      gap: 10px;
+
+      p {
+        font-size: 14px;
+        padding: 10px;
+        border: 2px solid #ebf0f3;
+        background-color: #e3e9f5;
+        border-radius: 5px;
+        margin: 0;
+        width: 100%;
+        word-break: break-word;
+        line-height: 1.4;
+        box-sizing: border-box;
+      }
+
+      .userData {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        &Name {
+          font-size: 14px;
+        }
+        &Date {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}

@@ -55,125 +55,19 @@
     margin: 20px;
 
     &Button {
+      min-width: 190px;
       padding: 10px 20px;
       color: #fff;
+      font-size: 16px;
       background-color: #008cf1;
       border-radius: 20px;
       border: none;
       cursor: pointer;
       outline: none;
+      margin-left: 300px;
 
       &:focus {
         border: none;
-      }
-    }
-  }
-
-  .applications {
-    width: 100%;
-    border-collapse: collapse;
-    flex: 1;
-    display: block;
-    overflow-y: auto;
-    &::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: #fff;
-      border-radius: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #008cf1;
-      border-radius: 4px;
-      border: 2px solid #008cf1;
-
-      &:hover {
-        background: #008cf1;
-      }
-    }
-
-    thead,
-    tbody {
-      display: table;
-      width: 100%;
-    }
-
-    &Head {
-      position: sticky;
-      top: 0;
-      background: white;
-      z-index: 1;
-      &Tr {
-        border-bottom: 2px solid #aeb3b7;
-        position: relative;
-
-        th {
-          position: relative;
-        }
-
-        th:not(:first-child)::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 50%;
-          height: 50%;
-          width: 2px;
-          background-color: #aeb3b7;
-          transform: translateY(-50%);
-        }
-      }
-    }
-
-    &Body {
-      &Tr {
-        border-bottom: 2px solid #f2f3f4;
-
-        &:last-child {
-          border-bottom: none;
-        }
-      }
-    }
-
-    .lineCell {
-      .lineWhite {
-        opacity: 0;
-      }
-      .line,
-      .lineWhite {
-        height: 40px;
-        width: 5px;
-        border-radius: 5px;
-        background-color: #f05f9a;
-      }
-    }
-
-    .id,
-    .name,
-    .status,
-    .executor {
-      text-align: left;
-      padding: 10px;
-    }
-
-    .id {
-      width: 100px;
-    }
-
-    .name {
-      width: 350px;
-    }
-
-    .status {
-      width: 130px;
-
-      .statusSpan {
-        padding: 5px 15px;
-        border-radius: 10px;
-        white-space: nowrap;
-        font-size: 12px;
-        color: #fff;
       }
     }
   }

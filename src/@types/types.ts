@@ -88,7 +88,8 @@ export type ModifiedApplication = {
 
 export type CreateCommentProps = {
   newApplication: ModifiedApplication;
-  onCommentAdded: () => void;
+  // onCommentAdded: () => void;
+  setNewApplication: React.Dispatch<React.SetStateAction<ModifiedApplication>>;
 };
 
 export type NewComment = {

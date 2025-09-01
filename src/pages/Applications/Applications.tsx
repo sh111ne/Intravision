@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 import styles from './Applications.module.scss';
 
 import {
@@ -18,6 +17,7 @@ import {
 
 import CreateApplication from '../../components/CreateApplication/CreateApplication';
 import EditApplication from '../../components/EditApplication/EditApplication';
+import ApplicationsTable from '../../components/ApplicationsTable/ApplicationsTable';
 
 import lens from '/img/searchicon.svg?url';
 import { tenantguid } from '../../shared/constants';
@@ -25,7 +25,9 @@ import { tenantguid } from '../../shared/constants';
 const Applications = () => {
   const { applications } = useAppSelector((state) => state.applicationsSlice);
   const dispatch = useAppDispatch();
+
   const { data: listApplications, error, isLoading, isSuccess } = useGetTasksQuery(tenantguid);
+
   const { data: statuses } = useGetStatusesQuery(tenantguid, { skip: !isSuccess });
   const { data: priorities } = useGetPrioritiesQuery(tenantguid, { skip: !isSuccess });
   const { data: users } = useGetUsersQuery(tenantguid, { skip: !isSuccess });
@@ -42,9 +44,13 @@ const Applications = () => {
     setActiveApplication(undefined);
   };
 
-  const toggleEditForm = (id: number) => {
+  const handleRowClick = (id: number) => {
     setIsCreateFormOpen(false);
     setActiveApplication(id);
+  };
+
+  const handleCloseEdit = () => {
+    setActiveApplication(undefined);
   };
 
   useEffect(() => {
@@ -54,19 +60,10 @@ const Applications = () => {
   }, [listApplications, isSuccess, dispatch]);
 
   useEffect(() => {
-    if (statuses) {
-      dispatch(setStatuses(statuses));
-    }
-    if (priorities) {
-      dispatch(setPriorities(priorities));
-    }
-    if (users) {
-      dispatch(setUsers(users));
-    }
-  }, [statuses, priorities, users, dispatch]); //Внимание
-
-  console.log(listApplications);
-  console.log(activeApplication);
+    if (statuses) dispatch(setStatuses(statuses));
+    if (priorities) dispatch(setPriorities(priorities));
+    if (users) dispatch(setUsers(users));
+  }, [statuses, priorities, users, dispatch]);
 
   return (
     <div className={styles.wrapper}>
@@ -76,70 +73,33 @@ const Applications = () => {
           <img src={lens} alt="lens" className={styles.searchLens} />
         </div>
       </div>
+
       <div className={styles.content}>
         <div className={styles.create}>
           <button
             className={styles.createButton}
             onClick={toggleCreateFormButton}
-            disabled={isLoading ? true : false}>
+            disabled={isLoading}>
             {isCreateFormOpen ? 'Закрыть' : 'Создать заявку'}
           </button>
         </div>
-        {isLoading ? (
-          <div className="loading">
-            <span className="loader"></span>
-          </div>
-        ) : error ? (
-          <div className="error">Ошибка</div>
-        ) : (
-          <table className={styles.applications}>
-            <thead className={styles.applicationsHead}>
-              <tr className={styles.applicationsHeadTr}>
-                <th className={styles.lineCell}>
-                  <div className={styles.lineWhite}></div>
-                </th>
-                <th className={styles.id}>ID</th>
-                <th className={styles.name}>Название</th>
-                <th className={styles.status}>Статус</th>
-                <th className={styles.executor}>Испольнитель</th>
-              </tr>
-            </thead>
-            <tbody className={styles.applicationsBody}>
-              {applications?.map((el) => {
-                return (
-                  <tr
-                    key={el.id}
-                    onClick={() => toggleEditForm(el.id)}
-                    className={styles.applicationsBodyTr}>
-                    <td className={styles.lineCell}>
-                      <div className={styles.line}></div>
-                    </td>
-                    <td className={styles.id}>{el.id}</td>
-                    <td className={styles.name}>
-                      {el.name.length > 75 ? el.name.substring(0, 75) + '...' : el.name}
-                    </td>
-                    <td className={styles.status}>
-                      <span className={styles.statusSpan} style={{ backgroundColor: el.statusRgb }}>
-                        {el.statusName.length > 14
-                          ? el.statusName.substring(0, 12) + '...'
-                          : el.statusName}
-                      </span>
-                    </td>
-                    <td className={styles.executor}>{el.executorName}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
+
+        <ApplicationsTable
+          applications={applications}
+          isLoading={isLoading}
+          error={error}
+          onRowClick={handleRowClick}
+        />
+
         {isCreateFormOpen && !activeApplication && (
           <div className={styles.formContainer}>
             <CreateApplication onClose={toggleCreateForm} setActive={setActiveApplication} />
           </div>
         )}
+
         {activeApplication && !isCreateFormOpen && (
           <div className={styles.formContainer}>
-            <EditApplication active={activeApplication} setActive={setActiveApplication} />
+            <EditApplication active={activeApplication} setActive={handleCloseEdit} />
           </div>
         )}
       </div>
